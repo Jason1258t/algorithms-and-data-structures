@@ -23,18 +23,21 @@ void stringCopy(char *dest, const char *src)
     dest[i] = '\0';
 }
 
-bool isLineEnding(char c) {
-    return c == '\n' || c == '\r';
+bool isLineEnding(char c)
+{
+    return c == '\n';
 }
 
 void reverseString(char str[])
 {
     int length = 0;
-    while (str[length] != '\0') {
+    while (str[length] != '\0')
+    {
         length++;
     }
-    
-    for (int i = 0; i < length / 2; i++) {
+
+    for (int i = 0; i < length / 2; i++)
+    {
         std::swap(str[i], str[length - 1 - i]);
     }
 }
