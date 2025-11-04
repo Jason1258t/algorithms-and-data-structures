@@ -1,5 +1,4 @@
-#ifndef OPERATOR_FACTORY_HPP
-#define OPERATOR_FACTORY_HPP
+#pragma once
 
 #include "operator.hpp"
 #include <string>
@@ -11,7 +10,6 @@ class OperatorFactory
 private:
     std::unordered_map<std::string, Operator> operatorTemplates;
     void initializeTemplates();
-    void registerTemplate(const Operator& opTemplate);
 
 public:
     OperatorFactory();
@@ -26,5 +24,3 @@ public:
     
     bool isClosingToken(const std::string& token) const;
 };
-
-#endif 

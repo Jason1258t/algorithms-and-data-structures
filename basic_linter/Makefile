@@ -1,28 +1,26 @@
 CXX = g++
 CXXFLAGS = -Wall -Wextra -pedantic -std=c++17 -Iinclude
-TARGET = my_program
+TARGET = linter
 
-# Директории
 SRC_DIR = src
 BUILD_DIR = build
 SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
 OBJECTS = $(SOURCES:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 
-# Создаем папку build если её нет
 $(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
+	@if not exist "$(BUILD_DIR)" mkdir "$(BUILD_DIR)"
 
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o $@ $^  # Оставляем $^, но меняем рабочий каталог
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
-# Правило компиляции
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(BUILD_DIR) $(TARGET)
+	@if exist "$(BUILD_DIR)" rmdir /s /q "$(BUILD_DIR)"
+	@if exist "$(TARGET)" del "$(TARGET)"
 
 rebuild: clean all
 
