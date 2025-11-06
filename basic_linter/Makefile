@@ -12,10 +12,11 @@ MKDIR_P = mkdir -p
 RM_F = rm -f
 RM_RF = rm -rf
 
+all: $(TARGET)
+
 $(BUILD_DIR):
 	$(MKDIR_P) $(BUILD_DIR)
 
-all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $^

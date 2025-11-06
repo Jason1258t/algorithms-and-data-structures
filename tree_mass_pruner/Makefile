@@ -2,16 +2,15 @@ CXX = g++
 CXXFLAGS = -Wall -Wextra -pedantic -std=c++17 -Iinclude
 TARGET = build/pruner
 
-
 SRC_DIR = src
 BUILD_DIR = build
 SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
 OBJECTS = $(SOURCES:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 
+all: $(TARGET)
+
 $(BUILD_DIR):
 	@if not exist "$(BUILD_DIR)" mkdir "$(BUILD_DIR)"
-
-all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $@ $^

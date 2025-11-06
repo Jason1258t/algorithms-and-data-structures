@@ -6,12 +6,12 @@ TreeNode::TreeNode(NodeType t, int w, std::string n)
 
 void TreeNode::pruneANDNode()
 {
-    std::cout << "pruning AND node "<< name << " with max valid weight " << maxValidWeight << '\n';
     int minLayerWeight = getMinTotalWeight() - weight;
-    std::cout << "min layer weight " << minLayerWeight << '\n';
+    int maxValidLayerWeight = maxValidWeight - weight;
     for (auto &child : children)
     {
-        int maxChildWeight = maxValidWeight - weight - (minLayerWeight - child->getMinTotalWeight());
+        int childMinWeight = child->getMinTotalWeight();
+        int maxChildWeight = maxValidLayerWeight - (minLayerWeight - childMinWeight);
         if (child->getMinTotalWeight() <= maxChildWeight)
         {
             child->setMaxValidWeight(maxChildWeight);
@@ -25,16 +25,15 @@ void TreeNode::pruneANDNode()
 void TreeNode::pruneORNode()
 {
     std::vector<std::unique_ptr<TreeNode>> newChildren;
-    std::cout << "pruning OR node "<< name << " with max valid weight " << maxValidWeight << '\n';
     for (auto &child : children)
     {
-        if (child->getMinTotalWeight() <= maxValidWeight)
+        if (child->getMinTotalWeight() <= maxValidWeight - weight)
         {
             child->setMaxValidWeight(maxValidWeight - weight);
             child->pruneInvalidChildren();
             newChildren.push_back(std::move(child));
         } else {
-            std::cout << "removed node " << name << '\n';
+            std::cout << "removed node " << child->name << '\n';
         }
     }
 

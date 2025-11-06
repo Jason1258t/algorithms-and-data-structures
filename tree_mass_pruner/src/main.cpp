@@ -62,5 +62,7 @@ int main(int argc, char *argv[])
 
     tree->setMaxValidWeight(weight);
     tree->pruneInvalidChildren();
+    
+    std::cout << '\n';
     TreeVisualizer::printTree(tree.get());
 }
