@@ -4,14 +4,8 @@
 #include <stack>
 #include <stdexcept>
 
-std::unique_ptr<TreeNode> TextTreeParser::parse(const std::string &filename)
+std::unique_ptr<TreeNode> TextTreeParser::parse(std::ifstream &file)
 {
-    std::ifstream file(filename);
-    if (!file.is_open())
-    {
-        throw std::runtime_error("Cannot open file: " + filename);
-    }
-
     std::string line;
     std::stack<std::pair<TreeNode *, int>> stack; // узел и его глубина
     std::unique_ptr<TreeNode> root = nullptr;

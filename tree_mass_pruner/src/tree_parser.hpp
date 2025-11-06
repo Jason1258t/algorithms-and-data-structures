@@ -8,11 +8,11 @@ class ITreeParser
 {
 public:
     virtual ~ITreeParser() = default;
-    virtual std::unique_ptr<TreeNode> parse(const std::string &input) = 0;
+    static std::unique_ptr<TreeNode> parse(std::ifstream &file);
 };
 
 class TextTreeParser : public ITreeParser
 {
 public:
-    std::unique_ptr<TreeNode> parse(const std::string &filename) override;
+    static std::unique_ptr<TreeNode> parse(std::ifstream &file);
 };

@@ -1,18 +1,23 @@
 #include "tree_node.hpp"
+#include <iostream>
 
-TreeNode::TreeNode(NodeType t, int w, std::string n)
-    : type(t), weight(w), name(n), maxValidWeight(std::numeric_limits<int>::max()) {}
+TreeNode::TreeNode(NodeType t, int w, std::string n) 
+    : type(t), name(n), weight(w), maxValidWeight(std::numeric_limits<int>::max()) {} 
 
 void TreeNode::pruneANDNode()
 {
+    std::cout << "pruning AND node "<< name << " with max valid weight " << maxValidWeight << '\n';
     int minLayerWeight = getMinTotalWeight() - weight;
+    std::cout << "min layer weight " << minLayerWeight << '\n';
     for (auto &child : children)
     {
-        int maxChildWeight = maxValidWeight - (minLayerWeight - child->getMinTotalWeight());
+        int maxChildWeight = maxValidWeight - weight - (minLayerWeight - child->getMinTotalWeight());
         if (child->getMinTotalWeight() <= maxChildWeight)
         {
             child->setMaxValidWeight(maxChildWeight);
             child->pruneInvalidChildren();
+        } else {
+            throw std::runtime_error("Cannot prune node: " + name);
         }
     }
 }
@@ -20,14 +25,16 @@ void TreeNode::pruneANDNode()
 void TreeNode::pruneORNode()
 {
     std::vector<std::unique_ptr<TreeNode>> newChildren;
-
+    std::cout << "pruning OR node "<< name << " with max valid weight " << maxValidWeight << '\n';
     for (auto &child : children)
     {
         if (child->getMinTotalWeight() <= maxValidWeight)
         {
-            child->setMaxValidWeight(maxValidWeight);
+            child->setMaxValidWeight(maxValidWeight - weight);
             child->pruneInvalidChildren();
             newChildren.push_back(std::move(child));
+        } else {
+            std::cout << "removed node " << name << '\n';
         }
     }
 

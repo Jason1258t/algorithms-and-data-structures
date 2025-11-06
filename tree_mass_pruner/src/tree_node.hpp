@@ -4,6 +4,7 @@
 #include <memory>
 #include <algorithm>
 #include <string>
+#include <limits>  
 
 enum class NodeType
 {
@@ -15,9 +16,9 @@ class TreeNode
 {
 private:
     NodeType type;
-    std::vector<std::unique_ptr<TreeNode>> children;
-    std::string name;
+    std::string name;  
     int weight;
+    std::vector<std::unique_ptr<TreeNode>> children;
     int maxValidWeight;
 
     void pruneANDNode();

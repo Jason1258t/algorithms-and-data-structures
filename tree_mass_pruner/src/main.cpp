@@ -1,3 +1,9 @@
+#include "tree_node.hpp"
+#include "tree_parser.hpp"
+#include "tree_visualizer.hpp"
+#include <iostream>
+#include <fstream>
+
 // Домогацкий Иван ПС-22
 
 // Среда выполнения:
@@ -13,6 +19,48 @@
 // "лишних" вершин.  Конечное дерево выдать на экран в  наглядном
 // виде (12).
 
+std::ifstream openFile(int argc, char *argv[])
+{
+    std::string filename;
+
+    if (argc > 1)
+    {
+        filename = argv[1];
+    }
+    else
+    {
+        std::cout << "Enter filename: ";
+        std::getline(std::cin, filename);
+    }
+
+    if (filename.empty())
+    {
+        throw std::runtime_error("Error: Filename cannot be empty!");
+    }
+
+    std::ifstream file(filename);
+    if (!file.is_open())
+    {
+        throw std::runtime_error("Error: Cannot open file '" + filename + "'!");
+    }
+
+    std::cout << "File '" << filename << "' opened successfully!" << std::endl;
+    return file;
+}
+
 int main(int argc, char *argv[])
 {
+    std::ifstream file = openFile(argc, argv);
+    auto tree = TextTreeParser::parse(file);
+    std::cout << "=== Original Tree ===" << std::endl;
+    TreeVisualizer::printTree(tree.get());
+
+    std::cout << "Enter max weight: ";
+    int weight;
+    std::cin >> weight;
+    std::cout << '\n';
+
+    tree->setMaxValidWeight(weight);
+    tree->pruneInvalidChildren();
+    TreeVisualizer::printTree(tree.get());
 }

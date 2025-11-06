@@ -1,0 +1,9 @@
+a MainSystem 10
+.o PowerUnit 5
+..a Battery 3
+...o Cell1 1
+...o Cell2 1
+..o Generator 4
+.o ControlUnit 8
+..a CPU 6
+..a Memory 2
