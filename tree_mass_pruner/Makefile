@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -Wall -Wextra -pedantic -std=c++17 -Iinclude
-TARGET = linter
+TARGET = build/tree
 
 SRC_DIR = src
 BUILD_DIR = build
