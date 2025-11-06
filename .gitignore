@@ -1,1 +1,7 @@
 .vscode
+**/.DS_Store
+**/*.o
+**/build/
+basic_linter/linter
+**/*.exe
+**/program

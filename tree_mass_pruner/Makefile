@@ -1,6 +1,7 @@
 CXX = g++
 CXXFLAGS = -Wall -Wextra -pedantic -std=c++17 -Iinclude
-TARGET = pruner
+TARGET = build/pruner
+
 
 SRC_DIR = src
 BUILD_DIR = build
