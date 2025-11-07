@@ -17,7 +17,6 @@ all: $(TARGET)
 $(BUILD_DIR):
 	$(MKDIR_P) $(BUILD_DIR)
 
-
 $(TARGET): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $^
 
