@@ -3,16 +3,15 @@
 #include "operator_factory.hpp"
 #include "logger.hpp"
 #include "parse_error.hpp"
-#include <vector>
-#include <stack>
+#include "stack.hpp"
 #include <string>
 
 class Tokenizer
 {
 private:
-    OperatorFactory& factory;
-    std::stack<Operator> stack;
-    Logger& logger;
+    OperatorFactory &factory;
+    SimpleStack<Operator> stack;
+    Logger &logger;
 
     bool isWordDelimiter(char c)
     {
@@ -25,10 +24,11 @@ private:
 
     void processWordToken(std::string &token, int lineNumber, int pos)
     {
-        if (token.empty()) return;
+        if (token.empty())
+            return;
 
         logger.log("TOKEN(word): " + token + "  (line " + std::to_string(lineNumber) + ")");
-        
+
         if (factory.hasOperator(token))
         {
             Operator op = factory.createFromString(token, lineNumber, pos);
@@ -45,21 +45,21 @@ private:
             if (stack.top().closeToken != token)
             {
                 throw ParserError("Mismatched closing '" + token + "' expected '" +
-                                 stack.top().closeToken + "' opened at line " +
-                                 std::to_string(stack.top().line));
+                                  stack.top().closeToken + "' opened at line " +
+                                  std::to_string(stack.top().line));
             }
             stack.pop();
         }
         token.clear();
     }
 
-    void processCharToken(char c, const std::string& line, int lineNumber, size_t& i)
+    void processCharToken(char c, const std::string &line, int lineNumber, size_t &i)
     {
         if (factory.hasOperator(c))
         {
             Operator op = factory.createFromChar(c, lineNumber, static_cast<int>(i));
             logger.log("TOKEN(single): '" + std::string(1, c) + "'  -> ");
-            
+
             if (op.contentType == ContentType::PLAIN_TEXT || op.allowsMultiline)
             {
                 logger.log("open operator '" + op.name + "' at line " + std::to_string(lineNumber));
@@ -78,8 +78,8 @@ private:
                     if (stack.top().closeToken != strCh)
                     {
                         throw ParserError("Mismatched closing '" + strCh + "' expected '" +
-                                         stack.top().closeToken + "' opened at line " +
-                                         std::to_string(stack.top().line));
+                                          stack.top().closeToken + "' opened at line " +
+                                          std::to_string(stack.top().line));
                     }
                     stack.pop();
                 }
@@ -108,20 +108,20 @@ private:
     {
         if (!stack.empty() && stack.top().closeToken == "\n")
         {
-            logger.log("Closing line-operator opened at line " + std::to_string(stack.top().line) + 
-                      " at end of line " + std::to_string(lineNumber));
+            logger.log("Closing line-operator opened at line " + std::to_string(stack.top().line) +
+                       " at end of line " + std::to_string(lineNumber));
             stack.pop();
         }
 
-        if (!stack.empty() && !stack.top().allowsMultiline) {
+        if (!stack.empty() && !stack.top().allowsMultiline)
+        {
             throw ParserError("Expected " + stack.top().closeToken + " but found end of line");
         }
-
 
         if (!token.empty())
         {
             logger.log("TOKEN(end-line word): " + token + "  (line " + std::to_string(lineNumber) + ")");
-            
+
             if (factory.hasOperator(token))
             {
                 Operator op = factory.createFromString(token, lineNumber, static_cast<int>(token.size() - 1));
@@ -137,8 +137,8 @@ private:
                 if (stack.top().closeToken != token)
                 {
                     throw ParserError("Mismatched closing '" + token + "' expected '" +
-                                     stack.top().closeToken + "' opened at line " +
-                                     std::to_string(stack.top().line));
+                                      stack.top().closeToken + "' opened at line " +
+                                      std::to_string(stack.top().line));
                 }
                 stack.pop();
             }
@@ -150,7 +150,7 @@ public:
     Tokenizer(OperatorFactory &factory, Logger &logger)
         : factory{factory}, logger{logger} {}
 
-    void processLine(const std::string& line, int lineNumber)
+    void processLine(const std::string &line, int lineNumber)
     {
         std::string token;
 
