@@ -1,12 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <queue>
 #include "parser.hpp"
-#include "way.hpp"
 #include "print.hpp"
-#include "utils.hpp"
-#include <climits>
+#include "path_finder.hpp"
 
 // Домогацкий Иван ПС-22
 
@@ -22,13 +19,13 @@
 // вывести список длин вторых по минимальности путей из столицы в
 // другие города. Допускается присутствие циклических путей (12).
 
-Way createNewWay(Way startWay, Road road)
+void printMenu()
 {
-    Way way = {startWay.from, road.to, startWay.shortest + road.length, startWay.alternative + road.length};
-    if (startWay.alternative == INT_MAX || startWay.shortest == startWay.alternative)
-    {
-        way.alternative = INT_MAX;
-    }
+    std::cout << "\n=== Меню ===" << std::endl;
+    std::cout << "1. Найти пути из столицы" << std::endl;
+    std::cout << "2. Сменить столицу" << std::endl;
+    std::cout << "3. Выход" << std::endl;
+    std::cout << "Выберите опцию: ";
 }
 
 int main(int argc, char *argv[])
@@ -36,6 +33,7 @@ int main(int argc, char *argv[])
     std::string placesFilename;
     std::string roadsFilename;
     int start;
+
     if (argc == 4)
     {
         start = std::stoi(argv[1]);
@@ -47,52 +45,54 @@ int main(int argc, char *argv[])
         std::cout << "Enter place filename: ";
         std::cin >> placesFilename;
 
-        std::cout << "Enter roads filenmae: ";
+        std::cout << "Enter roads filename: ";
         std::cin >> roadsFilename;
 
         std::cout << "Enter start place id: ";
         std::cin >> start;
     }
 
+    std::cout << "Загрузка данных..." << std::endl;
     std::unordered_map<int, Place> graph = Parser::parse(placesFilename, roadsFilename);
-    std::unordered_map<int, Way> ways;
-    ways[start] = {start, start, 0, 0};
+    std::cout << "Данные успешно загружены!" << std::endl;
 
-    std::queue<Place> queue;
-    queue.push(graph[start]);
-
-    while (!queue.empty())
+    bool running = true;
+    while (running)
     {
-        Place place = queue.front();
-        queue.pop();
+        printMenu();
 
-        for (auto road : place.roads)
+        int choice;
+        std::cin >> choice;
+
+        switch (choice)
         {
-            bool addToQueue = false;
-
-            Way way = createNewWay(ways[road.from], road);
-
-            if (ways.find(road.to) == ways.end())
-            {
-                ways[road.to] = way;
-                addToQueue = true;
-            }
-
-            Way &currentWay = ways[road.to];
-            auto shortestWays = findTwoSmallest(currentWay, way);
-
-            if (shortestWays.first != currentWay.shortest || shortestWays.second != currentWay.alternative)
-            {
-                currentWay.shortest = shortestWays.first;
-                currentWay.alternative = shortestWays.second;
-                addToQueue = true;
-            }
-            if (addToQueue)
-            {
-                queue.push(graph[road.to]);
-            }
+        case 1:
+        {
+            std::unordered_map<int, Way> ways = PathFinder::findWays(graph, start);
+            printDetailedWays(ways, graph);
+            break;
+        }
+        case 2:
+        {
+            std::cout << "Введите новый ID столицы: ";
+            std::cin >> start;
+            std::cout << "Столица изменена на город с ID: " << start << std::endl;
+            break;
+        }
+        case 3:
+        {
+            // Выход
+            running = false;
+            std::cout << "Выход из программы..." << std::endl;
+            break;
+        }
+        default:
+        {
+            std::cout << "Неверный выбор. Попробуйте снова." << std::endl;
+            break;
+        }
         }
     }
 
-    printDetailedWays(ways, graph);
+    return 0;
 }
