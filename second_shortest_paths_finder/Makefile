@@ -7,20 +7,24 @@ BUILD_DIR = build
 SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
 OBJECTS = $(SOURCES:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 
+MKDIR_P = mkdir -p
+RM_F = rm -f
+RM_RF = rm -rf
+
 all: $(TARGET)
 
 $(BUILD_DIR):
-	@if not exist "$(BUILD_DIR)" mkdir "$(BUILD_DIR)"
+	$(MKDIR_P) $(BUILD_DIR)
 
 $(TARGET): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $^
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	@if exist "$(BUILD_DIR)" rmdir /s /q "$(BUILD_DIR)"
-	@if exist "$(TARGET)" del "$(TARGET)"
+	$(RM_RF) $(BUILD_DIR)
+	$(RM_F) $(TARGET)
 
 rebuild: clean all
 

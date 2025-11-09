@@ -4,6 +4,9 @@
 #include <queue>
 #include "parser.hpp"
 #include "way.hpp"
+#include "print.hpp"
+#include "utils.hpp"
+#include <climits>
 
 // Домогацкий Иван ПС-22
 
@@ -18,6 +21,15 @@
 // направления. Один  из  городов  является  столицей.  Требуется
 // вывести список длин вторых по минимальности путей из столицы в
 // другие города. Допускается присутствие циклических путей (12).
+
+Way createNewWay(Way startWay, Road road)
+{
+    Way way = {startWay.from, road.to, startWay.shortest + road.length, startWay.alternative + road.length};
+    if (startWay.alternative == INT_MAX || startWay.shortest == startWay.alternative)
+    {
+        way.alternative = INT_MAX;
+    }
+}
 
 int main(int argc, char *argv[])
 {
@@ -35,10 +47,10 @@ int main(int argc, char *argv[])
         std::cout << "Enter place filename: ";
         std::cin >> placesFilename;
 
-        std::cout << "Enter roads filenmae";
+        std::cout << "Enter roads filenmae: ";
         std::cin >> roadsFilename;
 
-        std::cout << "Enter start place id";
+        std::cout << "Enter start place id: ";
         std::cin >> start;
     }
 
@@ -56,14 +68,31 @@ int main(int argc, char *argv[])
 
         for (auto road : place.roads)
         {
+            bool addToQueue = false;
+
+            Way way = createNewWay(ways[road.from], road);
+
             if (ways.find(road.to) == ways.end())
             {
-                ways[road.to] = {start, road.to,
-                                 ways[road.from].shortest + road.length,
-                                 ways[road.from].alternative + road.length};
+                ways[road.to] = way;
+                addToQueue = true;
             }
 
-            
+            Way &currentWay = ways[road.to];
+            auto shortestWays = findTwoSmallest(currentWay, way);
+
+            if (shortestWays.first != currentWay.shortest || shortestWays.second != currentWay.alternative)
+            {
+                currentWay.shortest = shortestWays.first;
+                currentWay.alternative = shortestWays.second;
+                addToQueue = true;
+            }
+            if (addToQueue)
+            {
+                queue.push(graph[road.to]);
+            }
         }
     }
+
+    printDetailedWays(ways, graph);
 }
