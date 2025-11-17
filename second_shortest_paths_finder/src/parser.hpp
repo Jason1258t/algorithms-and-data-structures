@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -6,9 +7,7 @@
 class Parser
 {
 public:
-    static std::unordered_map<int, Place> parse(const std::string &placesFile, const std::string &roadsFile);
+    static std::unordered_map<int, Place> parse(const std::string &filename);
 private:
-    static std::vector<Road> parseRoads(const std::string &roadsFile);
-    static std::unordered_map<int, Place> parsePlacesRaw(const std::string &placesFile);
     static std::ifstream openFile(const std::string &filename);
 };

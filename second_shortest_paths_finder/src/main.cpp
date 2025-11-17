@@ -30,30 +30,25 @@ void printMenu()
 
 int main(int argc, char *argv[])
 {
-    std::string placesFilename;
-    std::string roadsFilename;
+    std::string filename;
     int start;
 
-    if (argc == 4)
+    if (argc == 3)
     {
         start = std::stoi(argv[1]);
-        placesFilename = argv[2];
-        roadsFilename = argv[3];
+        filename = argv[2];
     }
     else
     {
-        std::cout << "Enter place filename: ";
-        std::cin >> placesFilename;
+        std::cout << "Введите имя файла с графом: ";
+        std::cin >> filename;
 
-        std::cout << "Enter roads filename: ";
-        std::cin >> roadsFilename;
-
-        std::cout << "Enter start place id: ";
+        std::cout << "Введите ID столицы: ";
         std::cin >> start;
     }
 
     std::cout << "Загрузка данных..." << std::endl;
-    std::unordered_map<int, Place> graph = Parser::parse(placesFilename, roadsFilename);
+    std::unordered_map<int, Place> graph = Parser::parse(filename);
     std::cout << "Данные успешно загружены!" << std::endl;
 
     bool running = true;
