@@ -1,8 +1,8 @@
 #include "tree_node.hpp"
 #include <iostream>
 
-TreeNode::TreeNode(NodeType t, int w, std::string n) 
-    : type(t), name(n), weight(w), maxValidWeight(std::numeric_limits<int>::max()) {} 
+TreeNode::TreeNode(NodeType t, int w, std::string n)
+    : type(t), name(n), weight(w), maxValidWeight(std::numeric_limits<int>::max()) {}
 
 void TreeNode::pruneANDNode()
 {
@@ -16,7 +16,9 @@ void TreeNode::pruneANDNode()
         {
             child->setMaxValidWeight(maxChildWeight);
             child->pruneInvalidChildren();
-        } else {
+        }
+        else
+        {
             std::cout << "cant prune node " << name;
             throw std::runtime_error("Cannot prune node: " + name);
         }
@@ -33,7 +35,9 @@ void TreeNode::pruneORNode()
             child->setMaxValidWeight(maxValidWeight - weight);
             child->pruneInvalidChildren();
             newChildren.push_back(std::move(child));
-        } else {
+        }
+        else
+        {
             std::cout << "removed node " << child->name << '\n';
         }
     }
@@ -48,8 +52,9 @@ void TreeNode::setMaxValidWeight(int maxWeight)
 
 bool TreeNode::pruneInvalidChildren()
 {
-    if (getMinTotalWeight() > maxValidWeight)
-        return false;
+    auto minWeight = getMinTotalWeight();
+    if (minWeight > maxValidWeight)
+        throw std::runtime_error("Cannot prune node: " + name + ", minimal avaliable weight: " + std::to_string(minWeight));
 
     if (type == NodeType::AND)
     {
