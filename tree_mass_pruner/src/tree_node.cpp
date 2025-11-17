@@ -17,6 +17,7 @@ void TreeNode::pruneANDNode()
             child->setMaxValidWeight(maxChildWeight);
             child->pruneInvalidChildren();
         } else {
+            std::cout << "cant prune node " << name;
             throw std::runtime_error("Cannot prune node: " + name);
         }
     }

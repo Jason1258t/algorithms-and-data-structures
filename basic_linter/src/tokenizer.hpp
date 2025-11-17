@@ -22,6 +22,19 @@ private:
         return true;
     }
 
+    void addOperator(const Operator &op)
+    {
+        if (!stack.empty())
+        {
+            auto lastOp = stack.top();
+            if (op.nestingType == NestingType::FORBIDDEN || (op.nestingType == NestingType::ONLY_THIS && lastOp.name != op.name))
+            {
+                throw ParserError("Ошибка вложенности операторов: " + op.name + " вложен в " + lastOp.name);
+            }
+        }
+        stack.push(op);
+    }
+
     void processWordToken(std::string &token, int lineNumber, int pos)
     {
         if (token.empty())
@@ -34,7 +47,7 @@ private:
             Operator op = factory.createFromString(token, lineNumber, pos);
             logger.log("  -> Open operator '" + op.name +
                        "' (start='" + op.startToken + "') at line " + std::to_string(lineNumber));
-            stack.push(op);
+            addOperator(op);
         }
         else if (factory.isClosingToken(token))
         {
@@ -63,7 +76,7 @@ private:
             if (op.contentType == ContentType::PLAIN_TEXT || op.allowsMultiline)
             {
                 logger.log("open operator '" + op.name + "' at line " + std::to_string(lineNumber));
-                stack.push(op);
+                addOperator(op);
             }
             else
             {
@@ -97,7 +110,7 @@ private:
             {
                 Operator op = factory.createFromString(two, lineNumber, static_cast<int>(i));
                 logger.log("TOKEN(multi): '" + two + "' -> open '" + op.name + "' at line " + std::to_string(lineNumber));
-                stack.push(op);
+                addOperator(op);
                 ++i; // пропускаем следующий символ
                 return;
             }
@@ -126,7 +139,7 @@ private:
             {
                 Operator op = factory.createFromString(token, lineNumber, static_cast<int>(token.size() - 1));
                 logger.log("  -> Open operator '" + op.name + "' (start='" + op.startToken + "') at line " + std::to_string(lineNumber));
-                stack.push(op);
+                addOperator(op);
             }
             else if (factory.isClosingToken(token))
             {
